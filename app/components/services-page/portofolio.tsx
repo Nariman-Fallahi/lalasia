@@ -1,11 +1,10 @@
-import type { IntroType } from "~/types/introType";
-import type { ServicePortfolioFeatureType } from "~/types/servicesType";
-import DescriptionHeader from "~/ui/sectionHeader/descriptionHeader";
-import EyebrowHeader from "~/ui/sectionHeader/eyebrowHeader";
-import TitleHeader from "~/ui/sectionHeader/titleHeader";
+import type { IntroType, ServicePortfolioFeature } from "~/types";
+import DescriptionHeader from "~/ui/section-header/description-header";
+import EyebrowHeader from "~/ui/section-header/eyebrow-header";
+import TitleHeader from "~/ui/section-header/title-header";
 
 interface PortofolioProps {
-  data: { intro: IntroType; features: ServicePortfolioFeatureType[] };
+  data: { intro: IntroType; features: ServicePortfolioFeature[] };
 }
 
 export default function Portofolio({ data }: PortofolioProps) {

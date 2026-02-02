@@ -41,7 +41,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
             setSearchParams({ page: String(currentPage - 1) })
           }
         >
-          <ChevronLeft className="size-[26px] lg:size-10 cursor-pointer" />
+          <ChevronLeft className="size-6.5 lg:size-10 cursor-pointer" />
         </li>
         {getPaginationRange(currentPage, totalPages).map((item) => {
           return (
@@ -68,7 +68,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
             setSearchParams({ page: String(currentPage + 1) })
           }
         >
-          <ChevronRight className="size-[26px] lg:size-10 cursor-pointer" />
+          <ChevronRight className="size-6.5 lg:size-10 cursor-pointer" />
         </li>
       </ul>
     </nav>

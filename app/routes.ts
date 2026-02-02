@@ -12,14 +12,14 @@ export default [
     route("products", "routes/products.tsx"),
     route("product/:productId", "routes/product.tsx"),
     route("services", "routes/services.tsx"),
-    route("article", "routes/article.tsx"),
+    route("article/:categoryId?", "routes/article.tsx"),
     route("about", "routes/about.tsx"),
   ]),
 
   layout("./layouts/auth-layout.tsx", [
     ...prefix("auth", [
       index("routes/auth.tsx"),
-      route("verify-email", "routes/verifyEmail.tsx"),
+      route("verify-email", "routes/verify-email.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

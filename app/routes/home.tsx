@@ -1,12 +1,12 @@
-import Header from "~/components/home-page/header";
+import Header from "~/components/home/header";
 import type { Route } from "./+types/home";
-import Benefits from "~/components/home-page/benefits";
-import Product from "~/components/home-page/product";
-import OurProduct from "~/components/home-page/ourProduct";
-import Testimonials from "~/components/home-page/testimonials";
-import Articles from "~/components/home-page/articles";
-import { getArticlesWithCategory } from "~/services/getArticle";
+import Benefits from "~/components/home/benefits";
+import Product from "~/components/home/product";
+import OurProduct from "~/components/home/our-product";
+import Testimonials from "~/components/home/testimonials";
+import Articles from "~/components/home/articles";
 import { createClient } from "~/utils/supabase/client";
+import { ARTICLE_WITH_CATEGORY_QUERY, mapArticleCategory, mapArticlesWithCategory } from "~/utils/article-helpers";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -18,131 +18,54 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
   const supabase = createClient();
 
-  const { data: homeIntro } = await supabase
-    .from("home_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: homeBenefitIntro } = await supabase
-    .from("home_benefit_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: homeBenefitFeature } = await supabase
-    .from("home_benefit_feature")
-    .select("*");
-
-  const { data: homeProductIntro } = await supabase
-    .from("home_product_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: homeProductList } = await supabase
-    .from("product_list")
-    .select("*")
-    .range(0, 9);
-
-  const { data: homeOurProductIntro } = await supabase
-    .from("home_our_product_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: homeOurProductStat } = await supabase
-    .from("home_our_product_stat")
-    .select("*");
-
-  const { data: homeTestimonialIntro } = await supabase
-    .from("home_testimonial_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: homeTestimonialList } = await supabase
-    .from("home_testimonial_list")
-    .select("*");
-
-  const { data: homeArticleIntro } = await supabase
-    .from("home_article_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: articles } = await supabase
-    .from("article_list")
-    .select("*")
-    .limit(3);
-
-  const homeArticles = await getArticlesWithCategory(articles!);
-
-  const { data: latestArticle } = await supabase
-    .from("article_list")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(1);
-
-  const homeLatestArticle = await getArticlesWithCategory(latestArticle!);
+  const [
+    benefitRes,
+    productsRes,
+    statsRes,
+    testimonialsRes,
+    articlesRes,
+    latestRes,
+  ] = await Promise.all([
+    supabase.from("home_benefit_features").select("*"),
+    supabase.from("products").select("*").range(0, 9),
+    supabase.from("home_our_product_stats").select("*"),
+    supabase.from("home_testimonials").select("*"),
+    supabase.from("articles").select(ARTICLE_WITH_CATEGORY_QUERY),
+    supabase
+      .from("articles")
+      .select(ARTICLE_WITH_CATEGORY_QUERY)
+      .order("created_at", { ascending: false })
+      .limit(1),
+  ]);
 
   return {
-    homeIntro,
-    homeBenefitIntro,
-    homeBenefitFeature,
-    homeProductIntro,
-    homeProductList,
-    homeOurProductIntro,
-    homeOurProductStat,
-    homeTestimonialIntro,
-    homeTestimonialList,
-    homeArticleIntro,
-    homeArticles,
-    homeLatestArticle: homeLatestArticle[0],
+    benefitFeatures: benefitRes.data ?? [],
+    products: productsRes.data ?? [],
+    ourProductStats: statsRes.data ?? [],
+    testimonials: testimonialsRes.data ?? [],
+    articlesWithCategory: mapArticlesWithCategory(articlesRes.data),
+    latestArticle: mapArticleCategory(latestRes.data?.[0]),
   };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   const {
-    homeIntro,
-    homeBenefitIntro,
-    homeBenefitFeature,
-    homeProductIntro,
-    homeProductList,
-    homeOurProductIntro,
-    homeOurProductStat,
-    homeTestimonialIntro,
-    homeTestimonialList,
-    homeArticleIntro,
-    homeArticles,
-    homeLatestArticle,
+    benefitFeatures,
+    products,
+    ourProductStats,
+    testimonials,
+    articlesWithCategory,
+    latestArticle,
   } = loaderData;
 
   return (
     <>
-      <Header data={homeIntro!} />
-      <Benefits
-        data={{ intro: homeBenefitIntro!, features: homeBenefitFeature! }}
-      />
-      <Product
-        data={{ intro: homeProductIntro!, productsList: homeProductList! }}
-      />
-      <OurProduct
-        data={{ intro: homeOurProductIntro!, stats: homeOurProductStat! }}
-      />
-      <Testimonials
-        data={{
-          intro: homeTestimonialIntro!,
-          testimonialList: homeTestimonialList!,
-        }}
-      />
-      <Articles
-        data={{
-          intro: homeArticleIntro!,
-          articlesData: homeArticles!,
-          latestArticle: homeLatestArticle!,
-        }}
-      />
+      <Header />
+      <Benefits features={benefitFeatures!} />
+      <Product products={products!} />
+      <OurProduct stats={ourProductStats!} />
+      <Testimonials testimonials={testimonials!} />
+      <Articles articles={articlesWithCategory} latestArticle={latestArticle} />
     </>
   );
 }

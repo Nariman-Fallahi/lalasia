@@ -1,5 +1,5 @@
 import type { IntroType } from "~/types/introType";
-import PageTitle from "../../ui/pageTitle";
+import PageTitle from "../../ui/page-title";
 
 interface HeaderProps {
   data: IntroType;

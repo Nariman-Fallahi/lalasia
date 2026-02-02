@@ -1,9 +1,10 @@
-import OurMission from "~/components/about-page/ourMission";
-import OurTeam from "~/components/about-page/ourTeam";
-import CustomVideoPlayer from "~/components/customVideoPlayer";
-import PageTitle from "~/ui/pageTitle";
+import OurMission from "~/components/about/our-mission";
+import OurTeam from "~/components/about/our-team";
+import CustomVideoPlayer from "~/components/custom-video-player";
+import PageTitle from "~/ui/page-title";
 import type { Route } from "./+types/about";
 import { createClient } from "~/utils/supabase/client";
+import { ABOUT_INTRO } from "~/constants/intros";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,77 +16,39 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
   const supabase = createClient();
 
-  const { data: aboutIntro } = await supabase
-    .from("about_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: aboutMissionIntro } = await supabase
-    .from("about_mission_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: aboutMissionStat } = await supabase
-    .from("about_mission_stat")
-    .select("*");
-
-  const { data: aboutMissionFeature } = await supabase
-    .from("about_mission_feature")
-    .select("*");
-
-  const { data: aboutTeamIntro } = await supabase
-    .from("about_team_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: aboutTeamMember } = await supabase
-    .from("about_team_member")
-    .select("*");
+  const [stats, features, members] = await Promise.all([
+    supabase.from("about_mission_stats").select("*"),
+    supabase.from("about_mission_features").select("*"),
+    supabase.from("about_team_members").select("*"),
+  ]);
 
   return {
-    aboutIntro,
-    aboutMissionIntro,
-    aboutMissionStat,
-    aboutMissionFeature,
-    aboutTeamIntro,
-    aboutTeamMember,
+    missionStats: stats.data,
+    missionFeatures: features.data,
+    teamMembers: members.data,
   };
 }
 
 export default function About({ loaderData }: Route.ComponentProps) {
-  const {
-    aboutIntro,
-    aboutMissionIntro,
-    aboutMissionStat,
-    aboutMissionFeature,
-    aboutTeamIntro,
-    aboutTeamMember,
-  } = loaderData;
+  const { missionFeatures, missionStats, teamMembers } = loaderData;
 
   return (
     <div className="px-3 md:px-6 lg:p-8">
       <PageTitle
-        title={aboutIntro?.title!}
-        description={aboutIntro?.description!}
+        title={ABOUT_INTRO.header.title}
+        description={ABOUT_INTRO.header.description}
       />
 
       <div className="mt-6">
-        <CustomVideoPlayer video_URL={aboutIntro?.video!} />
+        <CustomVideoPlayer video_URL={ABOUT_INTRO.header.videoUrl} />
       </div>
 
       <OurMission
-        aboutMissionIntro={aboutMissionIntro!}
-        aboutMissionFeatures={aboutMissionFeature!}
-        aboutMissionStats={aboutMissionStat!}
+        aboutMissionFeatures={missionFeatures || []}
+        aboutMissionStats={missionStats || []}
       />
 
-      <OurTeam
-        aboutTeamIntro={aboutTeamIntro!}
-        aboutTeamMembers={aboutTeamMember!}
-      />
+      <OurTeam aboutTeamMembers={teamMembers || []} />
     </div>
   );
 }

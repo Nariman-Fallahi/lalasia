@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { LoadingBarContainer } from "react-top-loading-bar";
-import LoadingBarComponent from "./loadingBar";
+import LoadingBarComponent from "./loading-bar";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://stijndv.com" },

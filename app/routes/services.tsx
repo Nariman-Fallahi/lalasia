@@ -1,6 +1,6 @@
 import Header from "~/components/services-page/header";
 import Portofolio from "~/components/services-page/portofolio";
-import ServiceList from "~/components/services-page/serviceList";
+import ServiceList from "~/components/services-page/service-list";
 import type { Route } from "./+types/services";
 import { createClient } from "~/utils/supabase/client";
 

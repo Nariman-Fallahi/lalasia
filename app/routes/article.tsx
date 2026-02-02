@@ -1,12 +1,14 @@
-import LatestArticles from "~/components/article-page/latestArticles";
-import HeroSlider from "~/components/article-page/heroSlider";
-import TrendingTopics from "~/components/article-page/trendingTopics";
-import PageTitle from "~/ui/pageTitle";
+import LatestArticles from "~/components/article/latest-articles";
+import HeroSlider from "~/components/article/hero-slider";
+import TrendingTopics from "~/components/article/trending-topics";
+import PageTitle from "~/ui/page-title";
 import type { Route } from "./+types/article";
-import type { IntroType } from "~/types/introType";
-import type { ArticleCategoryType, ArticleListType } from "~/types/articleType";
-import { getArticlesWithCategory } from "~/services/getArticle";
 import { createClient } from "~/utils/supabase/client";
+import { ARTICLE_INTRO } from "~/constants/intros";
+import {
+  ARTICLE_WITH_CATEGORY_QUERY,
+  mapArticlesWithCategory,
+} from "~/utils/article-helpers";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -17,93 +19,47 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({ params }: Route.LoaderArgs) {
   const supabase = createClient();
-  const categoryId = params.categoryId;
+  const categoryId = params?.categoryId;
 
-  const { data: articleIntro }: { data: IntroType | null } = await supabase
-    .from("article_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: articleCategory }: { data: ArticleCategoryType[] | null } =
-    await supabase.from("article_category").select("*");
-
-  const { data: articleHeroSlider }: { data: ArticleListType[] | null } =
-    await supabase.from("article_list").select("*").limit(2);
-
-  const processedArticleHeroSlider = await getArticlesWithCategory(
-    articleHeroSlider!
-  );
-
-  const { data: articleLatestIntro }: { data: IntroType | null } =
-    await supabase
-      .from("article_latest_intro")
-      .select("*")
-      .eq("id", 1)
-      .single();
-
-  const { data: latestArticles }: { data: ArticleListType[] | null } =
-    await supabase
-      .from("article_list")
-      .select("*")
+  const [categoriesRes, heroRes, latestRes, trendingRes] = await Promise.all([
+    supabase.from("article_categorys").select("*"),
+    supabase.from("articles").select(ARTICLE_WITH_CATEGORY_QUERY).limit(2),
+    supabase
+      .from("articles")
+      .select(ARTICLE_WITH_CATEGORY_QUERY)
       .order("created_at", { ascending: false })
-      .limit(2);
-
-  const processedLatestArticles = await getArticlesWithCategory(
-    latestArticles!
-  );
-
-  let query = supabase.from("article_list").select("*");
-
-  if (categoryId) {
-    query = query.eq("category", Number(categoryId));
-  }
-
-  const { data: trendingArticles }: { data: ArticleListType[] | null } =
-    await query;
-
-  const processedTrendingArticles = await getArticlesWithCategory(
-    trendingArticles!
-  );
+      .limit(2),
+    categoryId
+      ? supabase
+          .from("articles")
+          .select(ARTICLE_WITH_CATEGORY_QUERY)
+          .eq("category", Number(categoryId))
+      : supabase.from("articles").select(ARTICLE_WITH_CATEGORY_QUERY),
+  ]);
 
   return {
-    articleIntro,
-    articleCategory,
-    processedArticleHeroSlider,
-    articleLatestIntro,
-    processedLatestArticles,
-    processedTrendingArticles,
+    categories: categoriesRes.data || [],
+    heroSlides: mapArticlesWithCategory(heroRes.data),
+    latestArticles: mapArticlesWithCategory(latestRes.data),
+    trendingArticles: mapArticlesWithCategory(trendingRes.data),
   };
 }
 
 export default function Article({ loaderData }: Route.ComponentProps) {
-  const {
-    articleIntro,
-    processedArticleHeroSlider,
-    articleLatestIntro,
-    processedLatestArticles,
-    articleCategory,
-    processedTrendingArticles,
-  } = loaderData;
+  const { heroSlides, latestArticles, categories, trendingArticles } =
+    loaderData;
 
   return (
     <div>
       <PageTitle
-        title={articleIntro?.title!}
-        description={articleIntro?.description!}
+        title={ARTICLE_INTRO.header.title}
+        description={ARTICLE_INTRO.header.description}
       />
-      <HeroSlider data={processedArticleHeroSlider!} />
-      <LatestArticles
-        data={{
-          intro: articleLatestIntro!,
-          latestArticles: processedLatestArticles!,
-        }}
-      />
+      <HeroSlider articleHeroSliders={heroSlides || []} />
+      <LatestArticles latestArticles={latestArticles} />
       <TrendingTopics
-        data={{
-          articleCategory: articleCategory!,
-          trendingArticles: processedTrendingArticles!,
-        }}
+        articleCategorys={categories || []}
+        trendingArticles={trendingArticles || []}
       />
     </div>
   );

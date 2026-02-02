@@ -1,7 +1,8 @@
-import ProductDetails from "~/components/product-page/productDetails";
+import ProductDetails from "~/components/product/product-details";
 import type { Route } from "./+types/product";
-import RelatedItems from "~/components/product-page/relatedItems";
+import RelatedItems from "~/components/product/related-items";
 import { createClient } from "~/utils/supabase/client";
+import { ARTICLE_WITH_CATEGORY_QUERY, mapArticlesWithCategory } from "~/utils/article-helpers";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,49 +15,46 @@ export async function loader({ params }: Route.LoaderArgs) {
   const supabase = createClient();
   const id = params.productId;
 
-  const { data: productData } = await supabase
-    .from("product_list")
-    .select("*")
+  const { data: product, error } = await supabase
+    .from("products")
+    .select(
+      `
+      *,
+      colors:product_color(
+        color_info:product_colors(*)
+      )
+    `,
+    )
     .eq("id", id)
     .single();
 
-  let colorsHex = [];
-
-  const colorIds = productData?.color_id.split(",");
-
-  for (const colorId of colorIds!) {
-    const { data: colorHex } = await supabase
-      .from("colors")
-      .select("*")
-      .eq("id", colorId)
-      .single();
-
-    colorsHex.push(colorHex);
+  if (error || !product) {
+    throw new Response("Product Not Found", { status: 404 });
   }
 
-  const { data: productRelatedItems } = await supabase
-    .from("product_list")
-    .select("*")
-    .eq("category", productData?.category);
+  const { data: relatedItems } = await supabase
+    .from("products")
+    .select(ARTICLE_WITH_CATEGORY_QUERY)
+    .eq("category", product.category)
+    .neq("id", id)
+    .limit(4);
+
+  const formattedColors = product.colors?.map((c: any) => c.color_info) || [];
 
   return {
-    productData: { product: productData, colorsHex },
-    productRelatedItems,
+    product,
+    colors: formattedColors,
+    relatedItems: mapArticlesWithCategory(relatedItems),
   };
 }
 
 export default async function Product({ loaderData }: Route.ComponentProps) {
-  const { productData, productRelatedItems } = loaderData;
+  const { product, colors, relatedItems } = loaderData;
 
   return (
     <div className="px-3 md:px-6 lg:p-8">
-      <ProductDetails
-        data={{
-          product: productData.product!,
-          colorsHex: productData.colorsHex,
-        }}
-      />
-      <RelatedItems data={productRelatedItems!} />
+      <ProductDetails product={product || []} colorsHex={colors} />
+      <RelatedItems data={relatedItems} />
     </div>
   );
 }
