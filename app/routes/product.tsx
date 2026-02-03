@@ -2,7 +2,10 @@ import ProductDetails from "~/components/product/product-details";
 import type { Route } from "./+types/product";
 import RelatedItems from "~/components/product/related-items";
 import { createClient } from "~/utils/supabase/client";
-import { ARTICLE_WITH_CATEGORY_QUERY, mapArticlesWithCategory } from "~/utils/article-helpers";
+import {
+  ARTICLE_WITH_CATEGORY_QUERY,
+  mapArticlesWithCategory,
+} from "~/utils/article-helpers";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -20,8 +23,8 @@ export async function loader({ params }: Route.LoaderArgs) {
     .select(
       `
       *,
-      colors:product_color(
-        color_info:product_colors(*)
+      colors:product_colors(
+        color_info:colors(*)
       )
     `,
     )

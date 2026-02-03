@@ -23,7 +23,7 @@ export default function MainLayout({ loaderData }: Route.ComponentProps) {
     <div>
       <HeaderMenu isLogin={isLogin} user={user!} />
       <main>
-        <Outlet />
+        <Outlet context={{ isLogin, user }} />
       </main>
       <FooterMenu />
     </div>

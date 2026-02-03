@@ -6,7 +6,11 @@ import OurProduct from "~/components/home/our-product";
 import Testimonials from "~/components/home/testimonials";
 import Articles from "~/components/home/articles";
 import { createClient } from "~/utils/supabase/client";
-import { ARTICLE_WITH_CATEGORY_QUERY, mapArticleCategory, mapArticlesWithCategory } from "~/utils/article-helpers";
+import {
+  ARTICLE_WITH_CATEGORY_QUERY,
+  mapArticleCategory,
+  mapArticlesWithCategory,
+} from "~/utils/article-helpers";
 
 export function meta({}: Route.MetaArgs) {
   return [

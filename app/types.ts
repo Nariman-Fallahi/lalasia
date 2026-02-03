@@ -78,12 +78,37 @@ export type Product = {
   color_id: string;
 };
 
-export type ServiceData = {
+export type Color = {
+  id: number;
+  hex: string;
+};
+
+export type ProductWithQuantity = Product & {
+  quantity: number;
+};
+
+export type CartItem = {
+  id: number;
+  created_at: string;
+  user_id: string;
+  product_id: number;
+  color_id: number;
+  quantity: number;
+};
+
+export type CartItemWithProduct = CartItem & {
+  id: number;
+  quantity: number;
+  product: Product;
+  color: Color;
+};
+
+export type Service = {
   id: number;
   title: string;
   description: string;
 };
 
-export interface ServicePortfolioFeature extends ServiceData {
+export interface ServicePortfolioFeature extends Service {
   image: string;
 }

@@ -1,10 +1,10 @@
-import type { ServiceData } from "~/types";
+import type { Service } from "~/types";
 
 interface ServiceListProps {
-  data: ServiceData[];
+  data: Service[];
 }
 
-export default function ServiceList({ data }: ServiceListProps) {
+export default function Service({ data }: ServiceListProps) {
   return (
     <div className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
       {data.map((item) => (

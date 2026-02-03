@@ -14,6 +14,7 @@ export default [
     route("services", "routes/services.tsx"),
     route("article/:categoryId?", "routes/article.tsx"),
     route("about", "routes/about.tsx"),
+    route("shopping-cart", "routes/shopping-cart.tsx"),
   ]),
 
   layout("./layouts/auth-layout.tsx", [

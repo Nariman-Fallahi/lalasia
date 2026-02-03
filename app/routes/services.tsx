@@ -1,8 +1,9 @@
-import Header from "~/components/services-page/header";
-import Portofolio from "~/components/services-page/portofolio";
-import ServiceList from "~/components/services-page/service-list";
+import Header from "~/components/services/header";
+import Portofolio from "~/components/services/portofolio";
+import Service from "~/components/services/service";
 import type { Route } from "./+types/services";
 import { createClient } from "~/utils/supabase/client";
+import { SERVICES_INTRO } from "~/constants/intros";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,52 +15,32 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
   const supabase = createClient();
 
-  const { data: serviceIntro } = await supabase
-    .from("service_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: serviceFeature } = await supabase
-    .from("service_feature")
-    .select("*");
-
-  const { data: servicePortfolioIntro } = await supabase
-    .from("service_portfolio_intro")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  const { data: servicePortfolioFeature } = await supabase
-    .from("service_portfolio_feature")
-    .select("*");
+  const [serviceFeaturesResponse, portfolioFeatureResponse] = await Promise.all(
+    [
+      supabase.from("service_features").select("*"),
+      supabase.from("service_portfolio_features").select("*"),
+    ],
+  );
 
   return {
-    serviceIntro,
-    serviceFeature,
-    servicePortfolioIntro,
-    servicePortfolioFeature,
+    serviceFeatures: serviceFeaturesResponse.data ?? [],
+    servicePortfolioFeature: portfolioFeatureResponse.data ?? [],
   };
 }
 
 export default function Services({ loaderData }: Route.ComponentProps) {
-  const {
-    serviceIntro,
-    serviceFeature,
-    servicePortfolioIntro,
-    servicePortfolioFeature,
-  } = loaderData;
+  const { serviceFeatures, servicePortfolioFeature } = loaderData;
+  const { header } = SERVICES_INTRO;
 
   return (
     <div className="px-3 md:px-6 lg:p-8">
-      <Header data={serviceIntro!} />
-      <ServiceList data={serviceFeature!} />
-      <Portofolio
-        data={{
-          intro: servicePortfolioIntro!,
-          features: servicePortfolioFeature!,
-        }}
+      <Header
+        title={header.title}
+        description={header.description}
+        image={header.image}
       />
+      <Service data={serviceFeatures!} />
+      <Portofolio features={servicePortfolioFeature} />
     </div>
   );
 }

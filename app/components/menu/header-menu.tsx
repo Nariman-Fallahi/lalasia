@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { HEADER_MENU_PATHS } from "~/constants/paths";
 import { useLocation, Link, NavLink } from "react-router";
 import type { User } from "@supabase/supabase-js";
+import { createClient } from "~/utils/supabase/client";
+import { getLocalCart, GUEST_CART_KEY } from "~/utils/cart-utils";
 
 interface HeaderMenuProps {
   isLogin: boolean;
@@ -19,6 +21,32 @@ interface HeaderMenuProps {
 export default function HeaderMenu({ isLogin, user }: HeaderMenuProps) {
   const [menuStatus, setMenuStatus] = useState<"open" | "close" | null>(null);
   const { pathname } = useLocation();
+  const supabase = createClient();
+  const [cartCount, setCartCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (user) {
+      const getCartCount = async () => {
+        const { data: count, error } = await supabase.rpc("get_cart_count", {
+          user_id_input: user.id,
+        });
+
+        if (!error) {
+          setCartCount((count as number) || 0);
+        }
+      };
+      getCartCount();
+    } else {
+      const localCart = getLocalCart();
+
+      const totalQuantity = localCart.reduce(
+        (acc, item) => acc + item.quantity,
+        0,
+      );
+
+      setCartCount(totalQuantity);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (menuStatus === "open" && typeof window !== "undefined") {
@@ -73,10 +101,19 @@ export default function HeaderMenu({ isLogin, user }: HeaderMenuProps) {
               />
             </Link>
           )}
-          <ShoppingBasket
-            size={26}
-            className="text-gray-700 cursor-pointer hover:text-cyan-800 transition-all decoration-300"
-          />
+
+          <Link to="/shopping-cart" className="relative group">
+            <ShoppingBasket
+              size={26}
+              className="text-gray-700 cursor-pointer hover:text-cyan-800 transition-all duration-300"
+            />
+
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-main text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                {cartCount}
+              </span>
+            )}
+          </Link>
         </ul>
       </nav>
 

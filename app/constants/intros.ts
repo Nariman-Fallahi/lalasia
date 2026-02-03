@@ -81,3 +81,19 @@ export const PRODUCTS_INTRO = {
       "Discover unique, natural wooden items made by skilled artisans — perfect for home décor or everyday use. Timeless design, lasting quality.",
   },
 };
+
+export const SERVICES_INTRO = {
+  header: {
+    title: "Services",
+    description:
+      "The product crafted by talented crafter and using high quality material with love inside",
+    image:
+      "https://project-files.storage.c2.liara.space/Lalasia/Services/Rectangle%2024.png",
+  },
+  PORTFOLIO: {
+    eyebrow: "Portofolio",
+    title: "Amazing project we’ve done before",
+    description:
+      "From custom wooden furniture to stylish home accents, our past projects highlight the beauty of natural wood and expert craftsmanship. Each piece is made with care to bring warmth, function, and charm to your home.",
+  },
+};

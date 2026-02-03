@@ -1,8 +1,8 @@
 import { Link } from "react-router";
-import type { ProductListType } from "~/types";
+import type { Product } from "~/types";
 
 interface ProductCardProps {
-  data: ProductListType;
+  data: Product;
 }
 
 export default function ProductCard({ data }: ProductCardProps) {

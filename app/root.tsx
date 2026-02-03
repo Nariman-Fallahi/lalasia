@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { LoadingBarContainer } from "react-top-loading-bar";
 import LoadingBarComponent from "./loading-bar";
+import { Toaster } from "react-hot-toast";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://stijndv.com" },
@@ -30,6 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Toaster position="top-center" reverseOrder={false} />
         <LoadingBarContainer>
           <LoadingBarComponent />
           {children}
