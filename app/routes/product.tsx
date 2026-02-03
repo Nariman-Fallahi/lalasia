@@ -56,7 +56,7 @@ export default async function Product({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="px-3 md:px-6 lg:p-8">
-      <ProductDetails product={product || []} colorsHex={colors} />
+      <ProductDetails product={product || []} colors={colors} />
       <RelatedItems data={relatedItems} />
     </div>
   );
