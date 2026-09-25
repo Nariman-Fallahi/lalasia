@@ -1,6 +1,6 @@
 ## لالاسیا (_فارسی_)
 
-![Lalasia Screenshot](https://project-files.storage.c2.liara.space/Lalasia/MD/Screen%202.png)
+![Lalasia Screenshot](<https://efssqkwoqaddxnjzieot.supabase.co/storage/v1/object/public/lalasia(public)/other/Screen%202.png>)
 
 ## درباره لالاسیا
 
@@ -35,7 +35,7 @@ pnpm run dev
 
 ## Lalasia (_English_)
 
-![Lalasia Screenshot](https://project-files.storage.c2.liara.space/Lalasia/MD/Screen%202.png)
+![Lalasia Screenshot](<https://efssqkwoqaddxnjzieot.supabase.co/storage/v1/object/public/lalasia(public)/other/Screen%202.png>)
 
 ## About Lalasia
 

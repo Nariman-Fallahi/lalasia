@@ -4,7 +4,7 @@ export const HOME_INTRO = {
     description:
       "Each of our pieces tells a story — crafted with precision, designed with love, and carved from the finest wood to bring warmth and authenticity to your home.",
     image:
-      "https://project-files.storage.c2.liara.space/Lalasia/HeaderImage.png",
+      "https://efssqkwoqaddxnjzieot.supabase.co/storage/v1/object/public/lalasia(public)/other/HeaderImage.png",
   },
   benefits: {
     title: "Benefits when using our services",
@@ -24,7 +24,7 @@ export const HOME_INTRO = {
       "Thoughtfully crafted by skilled hands and premium materials — built to bring beauty and character into your space.",
     eyebrow: "Our Product",
     image:
-      "https://project-files.storage.c2.liara.space/Lalasia/unsplash_376KN_ISplE.png",
+      "https://efssqkwoqaddxnjzieot.supabase.co/storage/v1/object/public/lalasia(public)/other/unsplash_376KN_ISplE.png",
   },
   testimonial: {
     title: "What our customer say",
@@ -46,7 +46,7 @@ export const ABOUT_INTRO = {
     description:
       "Inspired by nature and crafted by hand, our wooden products bring warmth, beauty, and simplicity to your everyday life. Each piece tells a story of care, creativity, and craftsmanship.",
     videoUrl:
-      "https://project-files.storage.c2.liara.space/Lalasia/about/coverr-taking-photos-of-a-house-under-construction-2417-1080p.mp4",
+      "https://efssqkwoqaddxnjzieot.supabase.co/storage/v1/object/public/lalasia(public)/about/coverr-taking-photos-of-a-house-under-construction-2417-1080p-compressed.mp4",
   },
   mission: {
     eyebrow: "Our Mission",
@@ -88,7 +88,7 @@ export const SERVICES_INTRO = {
     description:
       "The product crafted by talented crafter and using high quality material with love inside",
     image:
-      "https://project-files.storage.c2.liara.space/Lalasia/Services/Rectangle%2024.png",
+      "https://efssqkwoqaddxnjzieot.supabase.co/storage/v1/object/public/lalasia(public)/services/Rectangle%2024.png",
   },
   PORTFOLIO: {
     eyebrow: "Portofolio",
